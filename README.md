@@ -43,8 +43,9 @@ The following detections will trigger as soon as you run the workflow one time:
 ## Detections that require a baseline
 Harden-Runner allows you to **monitor or block** any anomalous network calls that are made which are not established in the baseline. The baseline currently is generated after 100 job runs. In order to test this feature, a script is included to run the job 100 times
 
-* After running the [baseline generation script](), run the workflow one more time (Actions tab -> POC Detections and before running the workflow, enter a new domain, ie `https://www.pastebin.com`)
-* Observe the result in the Workflow Runs insights page under the Network Events tab
+* After running the [baseline generation script](link), run the workflow one more time (Actions tab -> POC Detections and before running the workflow, enter a new domain, ie `https://www.pastebin.com`)
+* This new domain is being seen for the first time after 100 job runs - to observe the anomalous network call, navigate to the workflow runs insights page under the Network Events tab
+* Block Policy [wip]
 
 
 
