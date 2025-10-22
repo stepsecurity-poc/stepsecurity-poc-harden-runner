@@ -17,7 +17,7 @@ This repository contains the workflow file `POC-detections-gh-hosted.yml` that c
 ## Setting up your environment
 * You can simply copy the workflow file into your own organization to test out the detections. This workflow file uses GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please reach out to StepSecurity
 * This workflow uses a workflow_dispatch trigger, meaning it can be started manually from the Actions tab by selecting POC Detections and clicking **Run workflow**
-* To quickly observe findings with StepSecurity, navigate to the StepSecurity tenant -> Harden Runner -> Workflow Runs and select the run with detection events triggered
+* To observe findings after running the workflow, navigate to the StepSecurity tenant -> Harden Runner -> Workflow Runs and select the run with detection events triggered
 
 ## Detections not requiring a baseline
 The following detections will trigger as soon as you run the workflow one time:
