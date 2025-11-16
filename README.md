@@ -1,4 +1,4 @@
-# Harden-Runner – Testing Detections
+# Harden-Runner POC Detections
  
 Harden-Runner is a purpose-built network filtering and runtime security monitoring platform for CI/CD runners. To learn more about Harden-Runner functionality, see [here](https://docs.stepsecurity.io/harden-runner)
 
@@ -15,11 +15,12 @@ This repository contains the workflow file `POC-detections-gh-hosted.yml` that c
 * Suspicious Process Events (Reverse Shell, Priviledged Container, Runner Memory Read) 
 
 ## Setting up your environment
-* You can simply copy the workflow file into your own organization to test out the detections. This workflow file uses GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please reach out to StepSecurity
+* You can simply copy the workflow file into your own organization or fork this repository to test out the detections. This workflow file uses GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact)
 * This workflow uses a workflow_dispatch trigger, meaning it can be started manually from the Actions tab by selecting POC Detections and clicking **Run workflow**
-* To observe findings after running the workflow, navigate to the StepSecurity tenant -> Harden Runner -> Workflow Runs and select the run with detection events triggered
+* To detect and block *anomalous network calls*, a baseline is required to be established. For testing purposes, it is recommended to reduce the minimum number of runs from the default (100) to 1.
+  * This can be done under your dashboard: `Admin Console -> Settings -> Anomaly Detection` - set this as '1' and **save changes**
 
-## Detections not requiring a baseline
+## Triggering detections not requiring a baseline
 The following detections will trigger as soon as you run the workflow one time:
 
 #### Reverse Shell (Process Event Detection) 
@@ -38,21 +39,12 @@ The following detections will trigger as soon as you run the workflow one time:
 * Monitors for API calls that contain data-exfiltration signals - specifically, POST, PUT, or PATCH requests going outside of the organization where the workflow resides
 
 #### Secrets in Build Logs
-* Monitors build logs for potentially leaked secrets. Once the workflow is run, this can be seen in the `Controls` tab for the `handle-private-key` job
+* Monitors build logs for potentially leaked secrets. Once the workflow is run, the leaked build log secret can be seen in the `Controls` tab for the `handle-private-key` job
 
-## Detections that require a baseline
-Harden-Runner allows you to **monitor or block** any anomalous network calls that are made which are not established in the baseline. The baseline currently is generated after 100 job runs. In order to test this feature, a script is included to run the job 100 times
+## Triggering detections requiring a baseline
+After a baseline is established, Harden Runner can **audit or block** any new, anomalous network calls that are outside of the baseline. The baseline is [configurable](https://docs.stepsecurity.io/admin-console/settings/anomaly-detection#configuration) by number of job runs required, or by number of days elapsed. You can find this in your tenant dashboard under `Admin Console -> Settings -> Anomaly Detection`. While the default is 100, it is recommended to lower this for easier testing purpose. 
 
-* After running the [baseline generation script](link), run the workflow one more time (Actions tab -> POC Detections and before running the workflow, enter a new domain, ie `https://www.pastebin.com`)
-* This new domain is being seen for the first time after 100 job runs - to observe the anomalous network call, navigate to the workflow runs insights page under the Network Events tab
-* Block Policy [wip]
-
-
-
- 
-
- 
-
- 
-
- 
+* Run the workflow based on the number of runs set above to generate a baseline. You can verify the baseline is stable under the `Harden-Runner -> Baseline` tab
+* Run the workflow one more time, this time entering a new domain. (`Actions tab -> POC Detections` and before running the workflow, enter a new domain, ie `https://www.pastebin.com`)
+* Since this new domain is now outside of the baseline, it will trigger an anomalous network call - to observe the anomalous network call, navigate to the workflow runs insights page under the Network Events tab
+* Block Policy - [this section is currently being updated]
