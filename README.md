@@ -54,14 +54,19 @@ After a baseline is established, Harden Runner can **audit or block** any new, a
 * Since this new domain is now outside of the baseline, it will trigger an anomalous network call - to observe the anomalous network call, navigate to the workflow runs insights page under the Network Events tab
 * Block Policy - [this section is currently being updated]
 
-## Lockdown Mode (Only for Kubernetes ARC deployments) 
+## Lockdown Mode (Only applicable for Kubernetes ARC deployments) 
 
-For self-hosted ARC (Actions Runner Controller) deployments, StepSecurity supports Lockdown Mode - which provides automatic blocking of CI/CD jobs when critical security threats are detected in real-time. Currently reverse shell, priviledged container, and runner worker memory read processes are supported. 
+For self-hosted ARC (Actions Runner Controller) deployments, StepSecurity supports Lockdown Mode - which provides automatic blocking of CI/CD jobs when critical security threats are detected in real-time. Currently: reverse shell, priviledged container, and runner worker memory read processes are supported. 
 
-To test this feature, firstly, the ARC harden runner agent must be installed. In order to do this, reach out to StepSecurity to enable the ARC installation instructions for your tenant. You can then find the instructions under `Settings -> Harden Runner Installation -> ARC`
-* To set up a Lockdown Mode Policy:
-  * Navigate to the Policy Store tab (`Harden Runner -> Policy Store`) and create a new policy, or edit an existing one
-  * Add the lockdown configuration using the following syntax:
+### Prerequisite
+
+To test this feature, firstly, the ARC Harden Runner agent must be installed. In order to do this, reach out to StepSecurity to enable the ARC installation instructions for your tenant. You can then find the instructions under `Settings -> Harden Runner Installation -> ARC`. Ensure that the workflows (`lock-down-[process event type].yml`) use the correct runner label. 
+
+### Set up Lockdown Mode Policy
+
+To set up a Lockdown Mode Policy:
+* Navigate to the Policy Store tab (`Harden Runner -> Policy Store`) and create a new policy, or edit an existing one
+* Add the lockdown configuration using the following syntax:
   ```
   lockdown-mode:
    enabled: true
@@ -71,4 +76,4 @@ To test this feature, firstly, the ARC harden runner agent must be installed. In
      - Reverse-Shell
   ```
 *  Attach the policy to your desired scope (cluster, organization, repository, or workflow)
-*  Now when a threat is detected, the job will be immediately terminated and you will receive a notification with details about the blocked threat
+*  You can now trigger one of the three workflows `lock-down-[process event type].yml` via the Actions tab. This will trigger detections for the three supported process events. When a threat is detected, the job will be immediately terminated and you will receive a notification with details about the blocked threat
