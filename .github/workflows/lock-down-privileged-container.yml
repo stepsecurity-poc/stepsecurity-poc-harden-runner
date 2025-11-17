@@ -1,0 +1,22 @@
+name: Lock-Down-Privileged
+on:
+  workflow_dispatch:
+  #This lockdown scenario is only supported for self hosted ARC (k8s) deployments 
+jobs:
+  build:
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+          
+      - name: Curl npmjs
+        run: "curl -s https://registry.npmjs.org"
+
+      - name: run privileged
+        run: docker run --rm --privileged ubuntu bash -c "sleep 5"
+                  
+      - name: Curl pastebin
+        run: "curl -s https://www.pastebin.com"
