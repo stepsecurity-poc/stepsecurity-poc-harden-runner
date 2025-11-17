@@ -54,19 +54,28 @@ After a baseline is established, Harden Runner can **audit or block** any new, a
 * Since this new domain is now outside of the baseline, it will trigger an anomalous network call - to observe the anomalous network call, navigate to the workflow runs insights page under the Network Events tab
 * Block Policy - [this section is currently being updated]
 
-## Lockdown Mode (Only applicable for Kubernetes ARC deployments) 
+## Lockdown Mode (Kubernetes ARC deployments only) 
 
-For self-hosted ARC (Actions Runner Controller) deployments, StepSecurity supports Lockdown Mode - which provides automatic blocking of CI/CD jobs when critical security threats are detected in real-time. Currently: reverse shell, priviledged container, and runner worker memory read processes are supported. 
+For **self-hosted ARC (Actions Runner Controller) deployments**, StepSecurity supports **Lockdown Mode** - which provides automatic blocking of CI/CD jobs when critical security threats are detected in real-time. Currently the following process detections are supported: 
+* Reverse shell activity
+* Priviledged container execution
+* Runner worker memory read access
 
-### Prerequisite
+### Prerequisites
 
-To test this feature, firstly, the ARC Harden Runner agent must be installed. In order to do this, reach out to StepSecurity to enable the ARC installation instructions for your tenant. You can then find the instructions under `Settings -> Harden Runner Installation -> ARC`. Ensure that the workflows (`lock-down-[process event type].yml`) use the correct runner label. 
+Before testing Lockdown Mode, you must have the ARC Harden-Runner agent installed in your Kubernetes cluster. To enable access to the ARC installation instructions:
 
-### Set up Lockdown Mode Policy
+1. Contact StepSecurity to activate ARC installation for your tenant.
+2. Once enabled, navigate to: **Settings → Harden Runner Installation → ARC**
+3. Follow the provided steps to deploy the Harden-Runner agent.
+
+Finally, ensure that the Lockdown Mode workflows `lock-down-[process event type].yml` use the correct runner label
+
+### Set up Lockdown Mode policy
 
 To set up a Lockdown Mode Policy:
-* Navigate to the Policy Store tab (`Harden Runner -> Policy Store`) and create a new policy, or edit an existing one
-* Add the lockdown configuration using the following syntax:
+1. Navigate to the Policy Store tab (**Harden Runner → Policy Store**) and create a new policy, or edit an existing one
+2. Add the lockdown configuration using the following syntax:
   ```
   lockdown-mode:
    enabled: true
@@ -75,5 +84,5 @@ To set up a Lockdown Mode Policy:
      - Runner-Worker-Memory-Read
      - Reverse-Shell
   ```
-*  Attach the policy to your desired scope (cluster, organization, repository, or workflow)
-*  You can now trigger one of the three workflows `lock-down-[process event type].yml` via the Actions tab. This will trigger detections for the three supported process events. When a threat is detected, the job will be immediately terminated and you will receive a notification with details about the blocked threat
+3. Attach the policy to your desired scope: cluster, organization, repository, or workflow
+4. Trigger one of the three available test workflows `lock-down-[process event type].yml` via the Actions tab. This will trigger detections for these process events. When a threat is detected, the job will be immediately terminated and you will receive a notification with details about the blocked threat
