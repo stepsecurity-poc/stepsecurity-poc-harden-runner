@@ -15,7 +15,9 @@ This repository contains the workflow file `POC-detections-gh-hosted.yml` that c
 * Suspicious Process Events (Reverse Shell, Priviledged Container, Runner Memory Read) 
 
 This workflow uses a workflow_dispatch trigger, meaning the workflows can be triggered manually from the Actions tab by selecting the workflow and clicking **Run workflow**
-
+## Prerequisites
+* Ensure you have installed the [StepSecurity GitHub App](https://github.com/apps/stepsecurity-actions-security) and have access to your StepSecurity dashboard
+  
 ## Environment setup and information 
 * You can fork this repository or simply copy the workflow files into your own organization for testing. The workflow files use GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact).
 * This workflow uses a workflow_dispatch trigger, meaning the workflows can be triggered manually from the Actions tab by selecting the workflow and clicking **Run workflow**
