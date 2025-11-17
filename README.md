@@ -15,7 +15,7 @@ This repository contains the workflow file `POC-detections-gh-hosted.yml` that c
 * Suspicious Process Events (Reverse Shell, Priviledged Container, Runner Memory Read) 
 
 ## Setting up your environment
-* You can simply copy the workflow file into your own organization or fork this repository to test out the detections. This workflow file uses GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact)
+* You can fork this repository or simply copy the [workflow file](https://github.com/step-security-poc/stepsecurity-poc-harden-runner/blob/main/.github/workflows/POC-detections-gh-hosted.yml) into your own organization for testing. This workflow file uses GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact)
 * This workflow uses a workflow_dispatch trigger, meaning it can be started manually from the Actions tab by selecting POC Detections and clicking **Run workflow**
 * To detect and block *anomalous network calls*, a baseline is required to be established. For testing purposes, it is recommended to reduce the minimum number of runs from the default (100) to 1.
   * This can be done under your dashboard: `Admin Console -> Settings -> Anomaly Detection` - set this as '1' and **save changes**
