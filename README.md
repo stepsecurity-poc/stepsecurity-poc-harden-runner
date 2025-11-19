@@ -1,42 +1,46 @@
 # Harden-Runner POC Detections
  
-Harden-Runner is a purpose-built network filtering and runtime security monitoring platform for CI/CD runners. To learn more about Harden-Runner functionality, see [here](https://docs.stepsecurity.io/harden-runner)
+Harden-Runner is a purpose-built network filtering and runtime security monitoring platform for CI/CD runners. To learn more about Harden-Runner functionality, see [here](https://docs.stepsecurity.io/harden-runner).
 
-This repository contains the workflow file `POC-detections-gh-hosted.yml` that contains several different jobs to trigger all Harden-Runner detections, which include: 
+This repository contains the workflow file `POC-detections-gh-hosted.yml` that contains several different jobs to trigger all Harden-Runner detections. It also contains several other workflows for testing Lockdown Mode (ARC deployments only). A summary of the detections are below: 
 
 | Detections | Description |
 |------------|-------|
 | **Secrets in Build Logs** | Detects secrets (API keys, tokens, etc.) that were accidentally leakd in build logs |
 | **Secrets in Artifacts** |  Detects secrets found in generated artifacts |
 | **Outbound Calls Blocked** | Blocks outbound network requests to prevent security risks |
-| **Anomalous Outbound Network Calls** | Detects anomalous or unexpected external network requests |
+| **Anomalous Outbound Network Calls** | Detects anomalous or unexpected external network requests [[Requires Baseline](https://docs.stepsecurity.io/harden-runner/baseline)]|
 | **Suspicious Outbound Network Calls** | Detects potentially malicious network requests during workflow execution |
 | **Source Code Overwritten** | Detect files modified during workflows to detect unauthorized changes |
-| **HTTPS Outbound Network Calls** | Monitors for API calls that contain data-exfiltration signals - specifically, POST, PUT, or PATCH requests going outside of the organization where the workflow resides |
-| **Action Uses Imposter Commit** | Monitors for Actions using tags that are pointed to malicious commits - commits that do not exist in the actions repository or are pointed to a fork. A technique that is used to evade code detection |
-| **Reverse Shell** | Monitors for reverse shell activity. An attacker establishing a reverse shell can potentially run commands, exfiltrate data, and move laterally |
-| **Privileged Container** | Monitors for priviledged container scenarios. A priviledged container process can give an attacker the ability to escape the container and access host resources, exfiltrate data, and move laterally |
-| **Runner Worker Memory Read** | Monitors for attempts to read runner.worker process memory. Compromises like TJ-Actions rely on accessing runner worker memory to extract secrets |
+| **HTTPS Outbound Network Calls** | Monitors API calls that contain data-exfiltration signals (ie; POST, PUT, or PATCH going outside of organization) |
+| **Action Uses Imposter Commit** | Monitors for actions using tags that are pointed to maliscious commits (pointed to a fork or outside repo) |
+| **Reverse Shell** | Monitors for reverse shell activity. Reverse shells allow attackers to run commands, exfiltrate data, and move laterally |
+| **Privileged Container** | Monitors for privileged containers, which can let attackers escape to the host, access data, and move laterally |
+| **Runner Worker Memory Read** | Monitors for attempts to read runner.worker memory, which attacks like TJ-Actions use to extract secrets |
 
 ## Prerequisites
 * Ensure you have installed the [StepSecurity GitHub App](https://github.com/apps/stepsecurity-actions-security) and have access to your StepSecurity dashboard
+* Fork/clone this repository or simply copy the workflow file [`POC-detections-gh-hosted.yml`](https://github.com/step-security-poc/stepsecurity-poc-harden-runner/blob/main/.github/workflows/POC-detections-gh-hosted.yml) into your own organization for testing
   
-## Environment setup and information 
-* You can fork this repository or simply copy the workflow file (`POC-detections-gh-hosted.yml`) into your own organization for testing. The workflow files use GitHub hosted runners with Harden-Runner deployed on the jobs. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact).
-* This workflow uses a workflow_dispatch trigger, meaning the workflows can be triggered manually from the Actions tab by selecting the workflow and clicking **Run workflow**
-* Most detections do not require a baseline to be established and will be triggered upon running the [POC Detections workflow](https://github.com/step-security-poc/stepsecurity-poc-harden-runner/blob/main/.github/workflows/POC-detections-gh-hosted.yml) file one time
+## Environment information 
+* The main workflow (`POC-detections-gh-hosted.yml`) runs on GitHub-hosted runners, and it already includes the harden-runner action. No additional installation or configuration is required. For Self-Hosted scenario, please [reach out to StepSecurity](https://www.stepsecurity.io/contact).
+* This workflow uses **workflow_dispatch** trigger, meaning the workflows can be triggered manually from the Actions tab by selecting the workflow and clicking **Run workflow**
+* Most detections do not require a baseline to be established and will be triggered upon running the [POC Detections workflow](https://github.com/step-security-poc/stepsecurity-poc-harden-runner/blob/main/.github/workflows/POC-detections-gh-hosted.yml) one time
+* This workflow contains several different jobs, each intentionally triggering certain detections. Take a look at the workflow to get familiarized 
 * To detect and block *anomalous network calls*, a baseline is required to be established. For testing purposes, it is recommended to reduce the minimum number of runs from the default (100) to 1
-  * This can be done under your dashboard: `Admin Console -> Settings -> Anomaly Detection` - set this as '1' and **save changes**
+  * This can be done under your dashboard: **Admin Console →  Settings →  Anomaly Detection** - set this as '1' and **Save Changes**
 
 ## Triggering detections not requiring a baseline
-The following detections will trigger as soon as you run the `POC-detections-gh-hosted.yml` workflow one time:
 
-* HTTPS Monitoring for Anomalous Network Calls (**Network** Event Detection)
-* Reverse Shell (**Process** Event Detection) 
-* Privileged Container (**Process** Event Detection) 
-* Runner Worker Memory Read (**Process** Event Detection) 
-* Imposter Commit (**Process** Event Detection)
-* Secrets in Build Logs (**Control** Detection)
+You can instantly test majority of these detections via the [`POC-detections-gh-hosted.yml`](https://github.com/step-security-poc/stepsecurity-poc-harden-runner/blob/main/.github/workflows/POC-detections-gh-hosted.yml) workflow. The following detections will trigger as soon as you run the `POC-detections-gh-hosted.yml` workflow one time:
+
+* HTTPS Monitoring for Anomalous Network Calls (**Network** Event)
+* Outbound Calls Blocked (**Network** Event)
+* Reverse Shell (**Process** Event) 
+* Privileged Container (**Process** Event) 
+* Runner Worker Memory Read (**Process** Event) 
+* Imposter Commit (**Process** Event)
+* Secrets in Build Logs (**Control**)
 
 ### Viewing detections not requiring a baseline
 
@@ -103,3 +107,14 @@ To set up a Lockdown Mode Policy:
   ```
 3. **Attach** the policy to your desired scope: cluster, organization, repository, or workflow
 4. Trigger one of the three available Lockdown test workflows, for example `lock-down-reverse-shell.yml` via the Actions tab. This will trigger detections for these process events. When a threat is detected, the job will be immediately terminated and you will receive a notification with details about the blocked threat
+
+*In the StepSecurity dashboard under **Harden-Runner → Workflow Runs**, you will see the following **Run Terminated** messaging for that workflow* 
+![Screenshot](./img/lock-down-list-runs.png)
+
+*The **Summary** page for that workflow run will show a red lock icon indicating the run was blocked*
+![Screenshot](./img/lock-down-summary.png)
+
+*The **Process Events** tab will also show indication with a red lock icon that the run was blocked*
+![Screenshot](./img/lock-down-process-events.png)
+
+
